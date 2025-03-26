@@ -53,8 +53,7 @@ def predict():
         prediction = model.predict(df_scaled)
         prediction_proba = None
         
-        if hasattr(model, 'predict_proba'):
-            prediction_proba = model.predict_proba(df)[0].tolist()
+
             
         
         result = {
@@ -63,11 +62,7 @@ def predict():
             'model_used': model_type
         }
         
-        if prediction_proba:
-            result['probability'] = {
-                'Rejected': prediction_proba[1],
-                'Approved': prediction_proba[0]
-            }
+
             
         return jsonify(result)
     
