@@ -39,7 +39,7 @@ def predict():
             'luxury_assets_value': float(data.get('luxury_assets_value')),
             'bank_asset_value': float(data.get('bank_asset_value'))
         }
-        
+        features['total_assets']=features['bank_asset_value']+features['commercial_assets_value']+features['residential_assets_value']+features['luxury_assets_value']
         df = pd.DataFrame([features])
         
         categorical_cols = ['education', 'self_employed']
@@ -50,13 +50,12 @@ def predict():
         for col in categorical_cols:
             df[col] = le[col].transform(df[col].astype(str))
         df_scaled = scaler.transform(df)
-        print(df_scaled)
         prediction = model.predict(df_scaled)
-        print(prediction)
         prediction_proba = None
         
         if hasattr(model, 'predict_proba'):
             prediction_proba = model.predict_proba(df)[0].tolist()
+            
         
         result = {
             'success': True,
@@ -66,8 +65,8 @@ def predict():
         
         if prediction_proba:
             result['probability'] = {
-                'Rejected': prediction_proba[0],
-                'Approved': prediction_proba[1]
+                'Rejected': prediction_proba[1],
+                'Approved': prediction_proba[0]
             }
             
         return jsonify(result)
